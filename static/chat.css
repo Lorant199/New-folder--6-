@@ -1,0 +1,49 @@
+#chat-toggle {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1050;
+}
+
+#chat-toggle i {
+    font-size: 1.75rem;
+    color: white;
+}
+
+#chat-sidebar {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 350px;
+    height: 100vh;
+    background: #1e1e1e;
+    color: white;
+    transition: right .3s ease;
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-sidebar.open {
+    right: 0;
+}
+
+.sidebar-header {
+    padding: .75rem;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#chat-sidebar.open {
+    right: 0 !important;
+}

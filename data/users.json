@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ab4b17a9-2c3c-4c4b-b948-42a32a8384e9",
+    "username": "user3",
+    "password": "1234",
+    "role": "employee"
+  },
+  {
+    "id": "ebc338e7-196f-4f0c-ad8b-81b6072368eb",
+    "username": "user32",
+    "password": "1234",
+    "role": "employee"
+  },
+  {
+    "id": "59afced9-4dd5-4854-9888-a8ab9a2b9392",
+    "username": "admin",
+    "password": "admin",
+    "role": "manager"
+  },
+  {
+    "id": "65665522-977b-49cd-9230-4fc27ad6e642",
+    "username": "admin2",
+    "password": "admin2",
+    "role": "employee"
+  },
+  {
+    "id": "363b1f4d-a4c5-428f-8d53-b7447d14edf3",
+    "username": "admin3",
+    "password": "admin",
+    "role": "manager"
+  }
+]

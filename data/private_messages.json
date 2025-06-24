@@ -1,0 +1,16 @@
+[
+  {
+    "id": "c2c81c95-53f3-4e60-b602-492caf3363c7",
+    "from": "ab4b17a9-2c3c-4c4b-b948-42a32a8384e9",
+    "to": "ebc338e7-196f-4f0c-ad8b-81b6072368eb",
+    "text": "asdasda",
+    "timestamp": "2025-06-24T03:44:14.029620Z"
+  },
+  {
+    "id": "c59970af-ed3a-4882-a4bd-6507384b72f4",
+    "from": "59afced9-4dd5-4854-9888-a8ab9a2b9392",
+    "to": "ab4b17a9-2c3c-4c4b-b948-42a32a8384e9",
+    "text": "asd",
+    "timestamp": "2025-06-24T04:28:26.592715Z"
+  }
+]

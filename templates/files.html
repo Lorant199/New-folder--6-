@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block body %}
+
+<h2 class="mb-4">File Library (Dropbox)</h2>
+
+<form
+  method="POST"
+  action="{{ url_for('upload_file') }}"
+  enctype="multipart/form-data"
+  class="mb-4"
+>
+  <input type="file" name="file" required>
+  <button type="submit" class="btn btn-primary">Upload to Dropbox</button>
+</form>
+
+<table class="table table-dark table-striped">
+  <thead>
+    <tr><th>Filename</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for fname in files %}
+    <tr>
+      <td>{{ fname }}</td>
+      <td>
+        <a href="{{ url_for('download_file', filename=fname) }}"
+           class="btn btn-sm btn-success me-2">Download</a>
+        {% if user.role=='manager' %}
+        <a href="{{ url_for('delete_file', filename=fname) }}"
+           class="btn btn-sm btn-danger"
+           onclick="return confirm('Delete {{ fname }}?');">
+          Delete
+        </a>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="2" class="text-center text-muted">
+      No files in Dropbox yet.
+    </td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

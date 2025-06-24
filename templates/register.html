@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+  <h2>Register</h2>
+  <form method="post">
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      <input name="username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input name="password" type="password" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Role</label>
+      <select name="role" class="form-select" required>
+        <option value="employee" selected>Employee</option>
+        <option value="manager">Manager</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+{% endblock %}

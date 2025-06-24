@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block body %}
+
+<!-- ── Statistics Row ────────────────────────────────────────────────────────── -->
+<div class="row mb-4">
+  <div class="col-md-3 mb-3">
+    <div class="card text-center bg-secondary text-light">
+      <div class="card-body">
+        <h5 class="card-title">Total Projects</h5>
+        <p class="display-6">{{ stats.total }}</p>
+      </div>
+    </div>
+  </div>
+  {% for st, count in stats.by_status.items() %}
+    <div class="col-md-3 mb-3">
+      <div class="card text-center 
+           {% if st=='pending' %}bg-warning
+           {% elif st=='approved' %}bg-success
+           {% else %}bg-danger{% endif %}
+           text-light">
+        <div class="card-body">
+          <h5 class="card-title">{{ st|capitalize }}</h5>
+          <p class="display-6">{{ count }}</p>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- ── Shared Calendar ───────────────────────────────────────────────────────── -->
+<div class="card mb-4 bg-dark text-light">
+  <div class="card-header">Team Calendar</div>
+  <div class="card-body p-0">
+    <div id="calendar"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      themeSystem: 'bootstrap5',
+      initialView: 'dayGridMonth',
+
+      // ← Set a fixed, smaller height in px:
+      height: 350,
+
+      selectable: true,
+      events: '/events',
+      dateClick: function(info) {
+        const title = prompt(`New event on ${info.dateStr}:\nTitle?`);
+        if (title) {
+          fetch('/events', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ title, date: info.dateStr })
+          })
+          .then(r => {
+            if (!r.ok) throw new Error();
+            return r.json();
+          })
+          .then(ev => calendar.addEvent(ev))
+          .catch(() => alert('Failed to save event.'));
+        }
+      }
+    });
+    calendar.render();
+  });
+</script>
+
+
+
+
+<!-- ── Projects Table ─────────────────────────────────────────────────────────── -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Projects</h2>
+  <a href="{{ url_for('create_project') }}" class="btn btn-success">
+    <i class="bi bi-plus-lg"></i> New Project
+  </a>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-dark table-striped align-middle">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>Open to All</th>
+        <th>Assignee</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in projects %}
+        <tr>
+          <td><input type="checkbox"></td>
+          <td>
+            <a href="{{ url_for('project_detail', pid=p.id) }}" class="link-light">
+              {{ p.title }}
+            </a>
+          </td>
+          <td>
+            <span class="badge
+              {% if p.status=='pending' %}bg-warning
+              {% elif p.status=='approved' %}bg-success
+              {% else %}bg-danger{% endif %}">
+              {{ p.status|upper }}
+            </span>
+          </td>
+          <td>
+            {% if p.priority=='urgent' %}
+              <i class="bi bi-flag-fill text-danger"></i>
+            {% elif p.priority=='regular' %}
+              <i class="bi bi-flag-fill text-success"></i>
+            {% else %}
+              <i class="bi bi-flag-fill text-warning"></i>
+            {% endif %}
+            {{ p.priority|capitalize }}
+          </td>
+          <td>
+            {% if p.open_to_all %}
+              <span class="badge bg-info">Yes</span>
+            {% else %}
+              <span class="text-muted">No</span>
+            {% endif %}
+          </td>
+          <td>
+            {% set creator = users_dict[p.creator_id] %}
+            {{ creator.username if creator else '(unknown)' }}
+          </td>
+          <td>
+            <a href="{{ url_for('project_detail', pid=p.id) }}"
+               class="btn btn-sm btn-outline-light">
+              View
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- ── Chart.js Script ───────────────────────────────────────────────────────── -->
+<script>
+  const ctx = document.getElementById('priorityChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Urgent','Medium','Regular'],
+      datasets: [{
+        label: 'Count',
+        data: [
+          {{ stats.by_priority.urgent }},
+          {{ stats.by_priority.medium }},
+          {{ stats.by_priority.regular }}
+        ]
+      }]
+    },
+    options: {
+      scales: {
+        x: { ticks: { color: 'white' } },
+        y: { beginAtZero: true, ticks: { color: 'white' } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+</script>
+
+{% endblock %}

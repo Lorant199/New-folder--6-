@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="d-flex justify-content-center align-items-start" style="min-height:80vh;">
+  <div class="card bg-dark text-light shadow-lg p-4" style="max-width:600px; width:100%; border-radius:1rem; border:none;">
+    <h3 class="text-center mb-4">New Project</h3>
+    <form method="post" class="row g-4">
+      <!-- Title -->
+      <div class="col-12">
+        <label for="title" class="form-label">Title</label>
+        <input id="title" name="title" type="text"
+               class="form-control form-control-lg"
+               placeholder="Enter project title" required>
+      </div>
+
+      <!-- Priority -->
+      <div class="col-12">
+        <label for="priority" class="form-label">Priority</label>
+        <select id="priority" name="priority"
+                class="form-select form-select-lg">
+          <option value="urgent">🔴 Urgent</option>
+          <option value="medium" selected>🟠 Medium</option>
+          <option value="regular">🟢 Regular</option>
+        </select>
+      </div>
+
+      <!-- Open to all -->
+      <div class="col-12 form-check">
+        <input class="form-check-input" type="checkbox"
+               id="openAll" name="open_to_all">
+        <label class="form-check-label" for="openAll">
+          Open to all employees
+        </label>
+      </div>
+
+      <!-- Description -->
+      <div class="col-12">
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" name="description"
+                  class="form-control form-control-lg"
+                  rows="5"
+                  placeholder="Describe your project…" required></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 text-center">
+        <button type="submit" class="btn btn-success btn-lg px-5">
+          Create Project
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

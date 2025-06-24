@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container my-4">
+
+  <div class="card bg-dark text-light mb-4 shadow">
+    <div class="card-body">
+      <h3 class="card-title">{{ project.title }}</h3>
+      <p class="card-text">{{ project.description }}</p>
+
+      <p>
+        <strong>Status:</strong>
+        <span class="badge 
+          {% if project.status=='pending' %} bg-warning
+          {% elif project.status=='approved' %} bg-success
+          {% else %} bg-danger{% endif %}">
+          {{ project.status|capitalize }}
+        </span>
+      </p>
+
+      <p>
+        <strong>Priority:</strong>
+        {% if project.priority=='urgent' %}
+          <i class="bi bi-flag-fill text-danger"></i> Urgent
+        {% elif project.priority=='regular' %}
+          <i class="bi bi-flag-fill text-success"></i> Regular
+        {% else %}
+          <i class="bi bi-flag-fill text-warning"></i> Medium
+        {% endif %}
+      </p>
+
+      <p>
+        <strong>Open to all:</strong>
+        {% if project.open_to_all %}
+          <span class="badge bg-info">Yes</span>
+        {% else %}
+          <span class="text-muted">No</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  {% if user.role == 'manager' and project.status == 'pending' %}
+    <form method="post" class="mb-4">
+      <button name="action" value="approved" class="btn btn-success me-2">
+        Approve
+      </button>
+      <button name="action" value="rejected" class="btn btn-danger">
+        Reject
+      </button>
+    </form>
+  {% endif %}
+
+  {% if user.role == 'manager' %}
+    <div class="card bg-dark text-light mb-4">
+      <div class="card-header">Assignments</div>
+      <div class="card-body">
+        <form method="post">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox"
+                   id="openAllAssign" name="open_to_all"
+                   {% if project.open_to_all %}checked{% endif %}>
+            <label class="form-check-label" for="openAllAssign">
+              Open to all employees
+            </label>
+          </div>
+          <label class="form-label mb-2">Specific Assignees:</label>
+          <div class="mb-3" style="max-height:200px; overflow-y:auto;">
+            {% for u in users %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       id="assgn_{{ u.id }}" name="assignees"
+                       value="{{ u.id }}"
+                       {% if u.id in project.assignees %}checked{% endif %}>
+                <label class="form-check-label" for="assgn_{{ u.id }}">
+                  {{ u.username }} ({{ u.role }})
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+          <button name="assign-submit" class="btn btn-primary">
+            Save Assignments
+          </button>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if user.role == 'employee'
+        and project.open_to_all
+        and project.status != 'rejected' %}
+    {% if user.id not in project.participants %}
+      <form method="post" class="mb-4">
+        <button name="join" class="btn btn-primary">Accept Project</button>
+      </form>
+    {% else %}
+      <div class="alert alert-info mb-4">
+        You’ve already accepted this project.
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <div class="mb-4">
+    <h5>Participants</h5>
+    {% if project.participants %}
+      <ul class="list-inline">
+        {% for pid in project.participants %}
+          {% set pu = users_dict.get(pid) %}
+          <li class="list-inline-item me-2">
+            <span class="badge bg-secondary">
+              {{ pu.username if pu else pid }}
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted">No participants yet.</p>
+    {% endif %}
+  </div>
+  <div class="card bg-dark text-light mb-4">
+    <div class="card-header">Comments</div>
+    <ul class="list-group list-group-flush">
+      {% for c in comments %}
+        <li class="list-group-item bg-secondary text-light">
+          {{ c.text }}
+          <div class="text-end text-muted small">
+            — {{ users_dict[c.user_id].username }}, {{ c.timestamp[:16].replace('T',' ') }}
+          </div>
+        </li>
+      {% endfor %}
+      {% if comments|length == 0 %}
+        <li class="list-group-item bg-secondary text-muted">
+          No comments yet.
+        </li>
+      {% endif %}
+    </ul>
+    <div class="card-body">
+      <form method="post">
+        <textarea name="comment"
+                  class="form-control bg-dark text-light mb-2"
+                  rows="3" placeholder="Add a comment…"></textarea>
+        <button type="submit" class="btn btn-outline-primary">
+          Post Comment
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
